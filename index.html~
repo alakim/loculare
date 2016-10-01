@@ -25,7 +25,7 @@
 		bigCircle.click(function(ev){
 			// console.log(ev);
 			if(ev.ctrlKey){
-				alert("Protoloculare");
+				alert("Dagont");
 			}
 		});
 		
