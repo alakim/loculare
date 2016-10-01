@@ -22,6 +22,14 @@
 			strokeWidth:5
 		});
 		bigCircle.drag();
+		bigCircle.click(function(ev){
+			// console.log(ev);
+			if(ev.ctrlKey){
+				alert("Dagont");
+			}
+		});
+		
+	
 	});
     </script>
   </head>
