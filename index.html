@@ -15,7 +15,13 @@
     <script src="js/lib/snap.svg-min.js"></script>
     <script>
 	$(function(){
-		alert(Html.version());
+		var s = Snap(800, 600);
+		var bigCircle = s.circle(100, 100, 50).attr({
+			fill:"#f00",
+			stroke:"#004",
+			strokeWidth:5
+		});
+		bigCircle.drag();
 	});
     </script>
   </head>
