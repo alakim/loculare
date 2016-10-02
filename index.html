@@ -17,7 +17,6 @@
 	var divtime = 1500; // время анимации деления
 	function division(c, s){
 		var r0 = c.attr("r");
-		console.log(c.attr("z-index"));
 		s.circle(
 			+c.attr("cx")+r0/2,
 			+c.attr("cy"),
@@ -31,7 +30,7 @@
 		c.animate({
 			r:r0/2,
 			cx:c.attr("cx")-r0/2
-		}, divtime);	
+		}, divtime);
 	}
 	$(function(){
 		var s = Snap(800, 600);
