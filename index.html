@@ -14,18 +14,38 @@
     <script src="js/lib/jdb.js"></script>
     <script src="js/lib/snap.svg-min.js"></script>
     <script>
+	var divtime = 1500; // время анимации деления
+	function division(c, s){
+		var r0 = c.attr("r");
+		console.log(c.attr("z-index"));
+		s.circle(
+			+c.attr("cx")+r0/2,
+			+c.attr("cy"),
+			r0/2
+		).attr({
+		        fill:c.attr("fill"),
+			stroke:c.attr("stroke"),
+		        strokeWidth:c.attr("strokeWidth"),
+			zIndex:+c.attr("zIndex")-1
+		}).insertBefore(c);
+		c.animate({
+			r:r0/2,
+			cx:c.attr("cx")-r0/2
+		}, divtime);	
+	}
 	$(function(){
 		var s = Snap(800, 600);
-		var bigCircle = s.circle(100, 100, 50).attr({
+		var protLoc = s.circle(100, 100, 50).attr({
 			fill:"#f00",
 			stroke:"#004",
 			strokeWidth:5
 		});
-		bigCircle.drag();
-		bigCircle.click(function(ev){
+		protLoc.drag();
+		protLoc.click(function(ev){
 			// console.log(ev);
 			if(ev.ctrlKey){
-				alert("Protoloculare");
+				//alert("Protoloculare");
+				division(protLoc, s);
 			}
 		});
 		
