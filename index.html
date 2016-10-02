@@ -17,7 +17,7 @@
 	var divtime = 1500; // время анимации деления
 	function division(c, s){
 		var r0 = c.attr("r");
-		s.circle(
+		/*s.circle(
 			+c.attr("cx")+r0/2,
 			+c.attr("cy"),
 			r0/2
@@ -26,10 +26,21 @@
 			stroke:c.attr("stroke"),
 		        strokeWidth:c.attr("strokeWidth"),
 			zIndex:+c.attr("zIndex")-1
-		}).insertBefore(c);
+		}).insertBefore(c);*/
+		var cd = c.clone();
+		cd.drag();
+		cd.click(function(ev){
+			if(ev.ctrlKey){
+				division(cd,s);
+			}
+		});
 		c.animate({
 			r:r0/2,
-			cx:c.attr("cx")-r0/2
+			cx:+c.attr("cx")-r0/2
+		}, divtime);
+		cd.animate({
+			r:r0/2,
+			cx:+c.attr("cx")+r0/2
 		}, divtime);
 	}
 	$(function(){
