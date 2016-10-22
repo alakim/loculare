@@ -1,6 +1,8 @@
 var Loculare = (function($, $H, $D){
 	
 	function spawn(snap, pos){
+		
+		
 
 		function division(c, s){
 			var r0 = c.attr("r");
@@ -36,29 +38,42 @@ var Loculare = (function($, $H, $D){
 		
 		switch(Loculare.settings.view){
 			case 'path': protLoc = snap.path(path);
+				prepareView(protLoc);
 				break;
 			case 'rect': protLoc = snap.rect(pos.x, pos.y, 50, 50);
+				prepareView(protLoc);
 				break;
-			case 'circle':
+			
+			case 'svg': Snap.load("js/svg/amoeba.svg", function (amoeba) {
+				var g = snap.group();
+					g.append(amoeba);
+					g.drag();
+		                });
+				break;
+				
+				case 'circle':
 			default:
 				protLoc = snap.circle(pos.x, pos.y, 50);
+				prepareView(protLoc);
 				break;
 		}
 		
-		protLoc.attr({
-			fill:"#f00",
-			stroke:"#004",
-			strokeWidth:5
-		});
-		
-		protLoc.drag();
-		protLoc.click(function(ev){
-			// console.log(ev);
-			if(ev.ctrlKey){
-				//alert("Protoloculare");
-				division(protLoc, snap);
-			}
-		});
+		function prepareView(protLoc){
+			protLoc.attr({
+				fill:"#f00",
+				stroke:"#004",
+				strokeWidth:5
+			});
+			
+			protLoc.drag();
+			protLoc.click(function(ev){
+				// console.log(ev);
+				if(ev.ctrlKey){
+					//alert("Protoloculare");
+					division(protLoc, snap);
+				}
+			});
+		}
 		
 	}
 	
