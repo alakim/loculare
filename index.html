@@ -13,53 +13,13 @@
     <script src="js/lib/html.js"></script>
     <script src="js/lib/jdb.js"></script>
     <script src="js/lib/snap.svg-min.js"></script>
+    <script src="js/loculare.js"></script>
     <script>
-	var divtime = 1500; // время анимации деления
-	function division(c, s){
-		var r0 = c.attr("r");
-		/*s.circle(
-			+c.attr("cx")+r0/2,
-			+c.attr("cy"),
-			r0/2
-		).attr({
-		        fill:c.attr("fill"),
-			stroke:c.attr("stroke"),
-		        strokeWidth:c.attr("strokeWidth"),
-			zIndex:+c.attr("zIndex")-1
-		}).insertBefore(c);*/
-		var cd = c.clone();
-		cd.drag();
-		cd.click(function(ev){
-			if(ev.ctrlKey){
-				division(cd,s);
-			}
-		});
-		c.animate({
-			r:r0/2,
-			cx:+c.attr("cx")-r0/2
-		}, divtime);
-		cd.animate({
-			r:r0/2,
-			cx:+c.attr("cx")+r0/2
-		}, divtime);
-	}
 	$(function(){
 		var s = Snap(800, 600);
-		var protLoc = s.circle(100, 100, 50).attr({
-			fill:"#f00",
-			stroke:"#004",
-			strokeWidth:5
-		});
-		protLoc.drag();
-		protLoc.click(function(ev){
-			// console.log(ev);
-			if(ev.ctrlKey){
-				//alert("Protoloculare");
-				division(protLoc, s);
-			}
-		});
+		Loculare.settings.divtime = 500;
 		
-	
+		Loculare.spawn(s, {x:100, y:100});
 	});
     </script>
   </head>
