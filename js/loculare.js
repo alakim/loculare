@@ -40,6 +40,17 @@ var Loculare = (function($, $H, $D, $V){
 		
 	}
 	
+	function skeleton(){ // скелет амебы
+		var nodeCountRange = {min:4, max:6}; // ограничение на количество узлов
+		var nodeCount = Math.random()*(nodeCountRange.max-nodeCountRange.min) + nodeCountRange.min;
+		var alphaRad = Math.PI*2/nodeCount; // угол между узлами
+		var r0 = 100;
+		var nodes = []; // массив координат узлов
+		for(var i=0; i<nodeCount; i++){
+			nodes.push($V.polar(r0, alphaRad*i));
+		}
+	}
+	
 	return {
 		settings:{
 			divtime: 1500   // время анимации деления

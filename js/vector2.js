@@ -17,6 +17,13 @@ var Vector2 = (function(){
 		return (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
 	}
 	
+	function polar(r, alphaRad){
+		return [
+			r * Math.cos(alphaRad),
+			r * Math.sin(alphaRad)
+		];
+	}
+	
 	return {
 		add:add,
 		mul:mul,
