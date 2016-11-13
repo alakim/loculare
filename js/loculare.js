@@ -1,4 +1,4 @@
-var Loculare = (function($, $H, $D){
+var Loculare = (function($, $H, $D, $V){
 
 	function division(c, s){
 		var r0 = c.attr("r");
@@ -17,6 +17,10 @@ var Loculare = (function($, $H, $D){
 			r:r0/2,
 			cx:+c.attr("cx")+r0/2
 		}, Loculare.settings.divtime);
+	}
+	
+	function collision(x1,y1,r1,x2,y2,r2){
+        	return $V.length2(x1, y1, x2, y2) <=(r1+r2)(r1+r2);
 	}
 	
 	function spawn(snap, pos){
@@ -42,5 +46,5 @@ var Loculare = (function($, $H, $D){
 		},
 		spawn: spawn
 	};
-})(jQuery, Html.version('4.1.0'), JDB.version('3.0.1'));
+})(jQuery, Html.version('4.1.0'), JDB.version('3.0.1'), Vector2);
 
