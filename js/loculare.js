@@ -82,15 +82,46 @@ var Loculare = (function($, $H, $D, $V){
 			nodes.push($V.polar(r0, alphaRad*i));
 		}
 
-		var ndCenter = snap.circle(pos.x, pos.y, 8);
-		ndCenter.drag();
+		var cBounds = [];
 		$D.each(nodes, function(nd){
 			var x = nd[0]+pos.x,
 				y = nd[1]+pos.y;
-			var ndView = snap.circle(x, y, 8);
 			var bound = snap.line(pos.x, pos.y, x, y).attr({stroke:'#0000ff', 'stroke-width':3});
-			ndView.drag();
+			var ndView = snap.circle(x, y, 8);
+			ndView.drag(dragmove, dragstart, dragend);
+			ndView.data('bound', bound);
+			
+			cBounds.push(bound);
 		});
+		
+		var ndCenter = snap.circle(pos.x, pos.y, 8);
+		ndCenter.drag(dragmove, dragstart, dragend);
+		ndCenter.data('cBounds', cBounds);
+		
+		
+		function dragstart(x, y, e) {
+			this.data("curPos", [
+				+this.attr("cx"), 
+				+this.attr("cy")
+			]);
+		}
+		function dragmove(dx, dy, x, y, e) {
+			var curP = this.data("curPos");
+			var posX = dx + curP[0],
+				posY = dy + curP[1];
+			
+			this.attr({cx:posX, cy:posY});
+			
+			var bound  = this.data('bound');
+			if(bound) bound.attr({x2:posX, y2:posY});
+			else{
+				var cBounds = this.data('cBounds');
+				for(var i=0; i<cBounds.length; i++){
+					cBounds[i].attr({x1:posX, y1:posY});
+				}
+			}
+		}
+		function dragend(e) {}
 
 	}
 
