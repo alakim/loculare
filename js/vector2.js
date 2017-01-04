@@ -17,17 +17,25 @@ var Vector2 = (function(){
 		return (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
 	}
 
-	function polar(r, alphaRad){
+	function polar2cart(r, alphaRad){
 		return [
 			r * Math.cos(alphaRad),
 			r * Math.sin(alphaRad)
 		];
+	}
+	
+	function cart2polar(x, y){
+		return {
+			length: Math.sqrt(x*x+y*y),
+			alpha: Math.atan(y/x)
+		};
 	}
 
 	return {
 		add:add,
 		mul:mul,
 		length2:length2,
-		polar:polar
+		polar2cart:polar2cart,
+		cart2polar:cart2polar
 	};
 })();
