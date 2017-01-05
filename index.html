@@ -20,7 +20,10 @@
 		var s = Snap(800, 600);
 		Loculare.settings.divtime = 500;
 		
-		Loculare.spawn(s, {x:100, y:100});
+		// Loculare.spawn(s, {x:100, y:100});
+		
+		(new Loculare.Skeleton()).spawn(s, {x:100, y:100});
+		(new Loculare.Amoeba()).spawn(s, {x:300, y:300});
 	});
     </script>
   </head>

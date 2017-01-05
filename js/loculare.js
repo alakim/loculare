@@ -2,8 +2,7 @@ var Loculare = (function($, $H, $D, $V){
 	
 	var enableTrace = false,
 		maxAnimationSteps = -100,
-		roundCoordinates = false,
-		fixedAngles = false;
+		roundCoordinates = false;
 	
 	var Settings = {
 		m: 1,	// масса узла
@@ -45,155 +44,206 @@ var Loculare = (function($, $H, $D, $V){
 
 	var animatedItems = [];
 	
-	function spawn(snap, pos){
-		var protLoc = snap.circle(pos.x, pos.y, 50).attr({
-			fill:"#f00",
-			stroke:"#004",
-			strokeWidth:5
-		});
-		protLoc.drag();
-		protLoc.click(function(ev){
-			// console.log(ev);
-			if(ev.ctrlKey){
-				//alert("Protoloculare");
-				division(protLoc, snap);
-			}
-		});
-		
-		animatedItems.push(new Skeleton(snap, pos));
 
-
-
-	}
-
-	function Skeleton(snap, pos){ // скелет амебы
-		var nodeCountRange = {min:4, max:6}; // ограничение на количество узлов
-		var nodeCount = Math.round(
-			Math.random()*
-			(nodeCountRange.max-nodeCountRange.min) + nodeCountRange.min
-		);
-
-		var alphaRad = (Math.PI*2.0)/nodeCount; // угол между узлами
-		
-		var r0 = 50;  // 80
-		
-		var nodes = []; // массив координат узлов
-		var cBounds = [];
-		
-		for(var i=0; i<nodeCount; i++){
-			var podLength = r0*(Math.random() + 0.5); // длинна части скелета
-			
-			var nodePos = new $V().SetPolar(podLength, alphaRad*i, false);
-			
-			var x = nodePos.x+pos.x,
-				y = nodePos.y+pos.y;
-				
-			var bound = snap.line(pos.x, pos.y, x, y).attr({stroke:'#0000ff', 'stroke-width':3});
-			bound.data('length', podLength);
-			bound.data('angle', alphaRad*i);
-			var ndView = snap.circle(x, y, 8);
-			ndView.drag(dragmove, dragstart, dragend);
-			ndView.data('bound', bound);
-			ndView.data('velocity', 0);
-			
-			cBounds.push(bound);
-			nodes.push(ndView);
-		}
-		
-		var ndCenter = snap.circle(pos.x, pos.y, 8);
-		ndCenter.drag(dragmove, dragstart, dragend);
-		ndCenter.data('cBounds', cBounds);
-		ndCenter.data('velocity', 0);
-		
-		this.center = ndCenter;
-		this.nodes = nodes;
-		
-		
-		function dragstart(x, y, e) {
-			this.data("curPos", [
-				+this.attr("cx"), 
-				+this.attr("cy")
-			]);
-		}
-		function dragmove(dx, dy, x, y, e) {
-			var curP = this.data("curPos");
-			var posX = dx + curP[0],
-				posY = dy + curP[1];
-			
-			this.attr({cx:posX, cy:posY});
-			
-			var bound  = this.data('bound');
-			if(bound) bound.attr({x2:posX, y2:posY});
-			else{
-				var cBounds = this.data('cBounds');
-				for(var i=0; i<cBounds.length; i++){
-					cBounds[i].attr({x1:posX, y1:posY});
-				}
-			}
-		}
-		function dragend(e) {}
-
+	function Skeleton(){ // скелет амебы
+		animatedItems.push(this);
 	}
 	
-	Skeleton.prototype.animate = function(dT){
-		
-		var bounds = this.center.data('cBounds');
-		var center = this.center;
-		var nodes = this.nodes;
-		
-		// координаты центра
-		var cx = parseInt(center.attr('cx')),
-			cy = parseInt(center.attr('cy'));
+	$D.extend(Skeleton.prototype, {
+		spawn: function(snap, pos){
+			var nodeCountRange = {min:4, max:6}; // ограничение на количество узлов
+			var nodeCount = Math.round(
+				Math.random()*
+				(nodeCountRange.max-nodeCountRange.min) + nodeCountRange.min
+			);
+
+			var alphaRad = (Math.PI*2.0)/nodeCount; // угол между узлами
 			
-		if(roundCoordinates){
-			cx = Math.floor(cx);
-			cy = Math.floor(cy);
-		}
+			var r0 = 50;  // 80
+			
+			var nodes = []; // массив координат узлов
+			var cBounds = [];
+			
+			for(var i=0; i<nodeCount; i++){
+				var podLength = r0*(Math.random() + 0.5); // длинна части скелета
+				
+				var nodePos = new $V().SetPolar(podLength, alphaRad*i, false);
+				
+				var x = nodePos.x+pos.x,
+					y = nodePos.y+pos.y;
+					
+				var bound = snap.line(pos.x, pos.y, x, y).attr({stroke:'#0000ff', 'stroke-width':3});
+				bound.data('length', podLength);
+				bound.data('angle', alphaRad*i);
+				var ndView = snap.circle(x, y, 8);
+				ndView.drag(dragmove, dragstart, dragend);
+				ndView.data('bound', bound);
+				ndView.data('velocity', 0);
+				
+				cBounds.push(bound);
+				nodes.push(ndView);
+			}
+			
+			var ndCenter = snap.circle(pos.x, pos.y, 8);
+			ndCenter.drag(dragmove, dragstart, dragend);
+			ndCenter.data('cBounds', cBounds);
+			ndCenter.data('velocity', 0);
+			
+			this.center = ndCenter;
+			this.nodes = nodes;
+			
+			
+			function dragstart(x, y, e) {
+				this.data("curPos", [
+					+this.attr("cx"), 
+					+this.attr("cy")
+				]);
+			}
+			function dragmove(dx, dy, x, y, e) {
+				var curP = this.data("curPos");
+				var posX = dx + curP[0],
+					posY = dy + curP[1];
+				
+				this.attr({cx:posX, cy:posY});
+				
+				var bound  = this.data('bound');
+				if(bound) bound.attr({x2:posX, y2:posY});
+				else{
+					var cBounds = this.data('cBounds');
+					for(var i=0; i<cBounds.length; i++){
+						cBounds[i].attr({x1:posX, y1:posY});
+					}
+				}
+			}
+			function dragend(e) {}
+		},
+		animate: function(dT){
 		
-		
-		for(var i=0; i<nodes.length; i++){
-			var nd = nodes[i];
-			var v0 = nd.data('velocity');
+			var bounds = this.center.data('cBounds');
+			var center = this.center;
+			var nodes = this.nodes;
 			
-			var viewTrace = enableTrace && i==1;
-			
-			if(viewTrace) console.log('---- node '+i+' ----');
-			
-			// координаты узла
-			var x = parseInt(nd.attr('cx')),
-				y = parseInt(nd.attr('cy'));
+			// координаты центра
+			var cx = parseInt(center.attr('cx')),
+				cy = parseInt(center.attr('cy'));
 				
 			if(roundCoordinates){
-				x = Math.floor(x);
-				y = Math.floor(y);
+				cx = Math.floor(cx);
+				cy = Math.floor(cy);
 			}
+			
+			
+			for(var i=0; i<nodes.length; i++){
+				var nd = nodes[i];
+				var v0 = nd.data('velocity');
 				
-			if(viewTrace) console.log('x: ', x, ', y: ', y, ', cx:', cx, ', cy:', cy);
-			
-			// текущая длина луча
-			var curLength = Math.sqrt((cx-x)*(cx-x) + (cy-y)*(cy-y));
-			
-			var bound = nd.data('bound');
-			var stdLength = bound.data('length');
-			
-			if(viewTrace) console.log('curLength: ', curLength, ' stdLength: ', stdLength);
-			
-			var dL = curLength - stdLength;
-			
-			var dS = v0*dT + (dL*Settings.k* dT*dT)/Settings.m; // линейное перемещение
+				var viewTrace = enableTrace && i==1;
+				
+				if(viewTrace) console.log('---- node '+i+' ----');
+				
+				// координаты узла
+				var x = parseInt(nd.attr('cx')),
+					y = parseInt(nd.attr('cy'));
+					
+				if(roundCoordinates){
+					x = Math.floor(x);
+					y = Math.floor(y);
+				}
+					
+				if(viewTrace) console.log('x: ', x, ', y: ', y, ', cx:', cx, ', cy:', cy);
+				
+				// текущая длина луча
+				var curLength = Math.sqrt((cx-x)*(cx-x) + (cy-y)*(cy-y));
+				
+				var bound = nd.data('bound');
+				var stdLength = bound.data('length');
+				
+				if(viewTrace) console.log('curLength: ', curLength, ' stdLength: ', stdLength);
+				
+				var dL = curLength - stdLength;
+				
+				var dS = v0*dT + (dL*Settings.k* dT*dT)/Settings.m; // линейное перемещение
 
-			var newPos;
-			
-			if(fixedAngles){
+				var newPos;
+				
 				newPos = new $V()
 					.SetPolar(
 						curLength - dS,
 						bound.data('angle'),
 						false
 					);
+
+				if(viewTrace) console.log('newPos:', newPos);
+				
+				var newX = newPos.x + cx,
+					newY = newPos.y + cy;
+				
+				nd.attr({cx: newX, cy: newY});
+				bound.attr({x2:newX, y2:newY});
+				
 			}
-			else{
+		}
+	});
+	
+	function Amoeba(){
+		animatedItems.push(this);
+	}
+	
+	$D.extend(Amoeba.prototype, {
+		spawn: function(snap, pos){
+			Skeleton.prototype.spawn.apply(this, [snap, pos]);
+		},
+		animate: function(dT){
+		
+			var bounds = this.center.data('cBounds');
+			var center = this.center;
+			var nodes = this.nodes;
 			
+			// координаты центра
+			var cx = parseInt(center.attr('cx')),
+				cy = parseInt(center.attr('cy'));
+				
+			if(roundCoordinates){
+				cx = Math.floor(cx);
+				cy = Math.floor(cy);
+			}
+			
+			
+			for(var i=0; i<nodes.length; i++){
+				var nd = nodes[i];
+				var v0 = nd.data('velocity');
+				
+				var viewTrace = enableTrace && i==1;
+				
+				if(viewTrace) console.log('---- node '+i+' ----');
+				
+				// координаты узла
+				var x = parseInt(nd.attr('cx')),
+					y = parseInt(nd.attr('cy'));
+					
+				if(roundCoordinates){
+					x = Math.floor(x);
+					y = Math.floor(y);
+				}
+					
+				if(viewTrace) console.log('x: ', x, ', y: ', y, ', cx:', cx, ', cy:', cy);
+				
+				// текущая длина луча
+				var curLength = Math.sqrt((cx-x)*(cx-x) + (cy-y)*(cy-y));
+				
+				var bound = nd.data('bound');
+				var stdLength = bound.data('length');
+				
+				if(viewTrace) console.log('curLength: ', curLength, ' stdLength: ', stdLength);
+				
+				var dL = curLength - stdLength;
+				
+				var dS = v0*dT + (dL*Settings.k* dT*dT)/Settings.m; // линейное перемещение
+
+				var newPos;
+				
+
+				
 				var vect0 = new $V(x-cx, y-cy); // исходное направление
 				if(viewTrace) console.log('vect0: ', vect0);
 				
@@ -205,18 +255,18 @@ var Loculare = (function($, $H, $D, $V){
 						vect0polar.angle,
 						true
 					);
+						
+				if(viewTrace) console.log('newPos:', newPos);
+				
+				var newX = newPos.x + cx,
+					newY = newPos.y + cy;
+				
+				nd.attr({cx: newX, cy: newY});
+				bound.attr({x2:newX, y2:newY});
+				
 			}
-			if(viewTrace) console.log('newPos:', newPos);
-			
-			var newX = newPos.x + cx,
-				newY = newPos.y + cy;
-			
-			nd.attr({cx: newX, cy: newY});
-			bound.attr({x2:newX, y2:newY});
-			
 		}
-	}
-	
+	});
 	
 	function animationStep(frameNumber, t0){
 		if(enableTrace) console.log('*********** Animation step '+frameNumber+' **********');
@@ -239,6 +289,8 @@ var Loculare = (function($, $H, $D, $V){
 		settings:{
 			divtime: 1500   // время анимации деления
 		},
-		spawn: spawn
+		// spawn: spawn,
+		Skeleton:Skeleton,
+		Amoeba:Amoeba
 	};
 })(jQuery, Html.version('4.1.0'), JDB.version('3.0.1'), Vector);
