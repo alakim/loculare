@@ -8,7 +8,7 @@ var Amoeba = (function($, $H, $D, $V){
 
 	$D.extend(Amoeba.prototype, {
 		spawn: function(snap, pos){
-			Skeleton.prototype.spawn.apply(this, [snap, pos]);
+			 Loculare.basicSpawn(snap, pos, this, skin);
 		},
 		animate: function(dT){
 		
@@ -55,7 +55,10 @@ var Amoeba = (function($, $H, $D, $V){
 				
 				var dL = curLength - stdLength;
 				
-				var dS = v0*dT + (dL*Loculare.Settings.k* dT*dT)/Loculare.Settings.m; // линейное перемещение
+				var k = Loculare.Settings.k;
+				if(dL<0) k*=.001;
+				
+				var dS = v0*dT + (dL*k* dT*dT)/Loculare.Settings.m; // линейное перемещение
 
 				var newPos;
 				
@@ -83,6 +86,35 @@ var Amoeba = (function($, $H, $D, $V){
 				
 			}
 		}
+	});
+	
+		
+	var skin;
+	
+	$(function(){
+		skin = {
+			node:{
+				color:Loculare.skin=='tron'?'#800'
+					:Loculare.skin=='bio'?'#021b14'
+					:'#000',
+				fill: Loculare.skin=='bio'?'#02241b'
+					:'#000'
+			},
+			center:{
+				color: Loculare.skin=='tron'?'#f40'
+					:Loculare.skin=='bio'?'#5e2e00'
+					:'#000',
+				fill: Loculare.skin=='bio'?'#8f4500'
+					:'#000'
+			},
+			line:{
+				color: Loculare.skin=='tron'?'#f000ff'
+					:Loculare.skin=='bio'?'#0d7e5c'
+					:'#0000ff',
+				width: Loculare.skin=='tron'?1
+					:3
+			}
+		};
 	});
 	
 	return Amoeba;

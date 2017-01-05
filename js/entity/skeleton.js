@@ -4,74 +4,12 @@ var Skeleton = (function($, $H, $D, $V){
 		//animatedItems.push(this);
 	}
 
+	
+	
 
 	$D.extend(Skeleton.prototype, {
 		spawn: function(snap, pos){
-			var nodeCountRange = {min:4, max:6}; // ограничение на количество узлов
-			var nodeCount = Math.round(
-				Math.random()*
-				(nodeCountRange.max-nodeCountRange.min) + nodeCountRange.min
-			);
-
-			var alphaRad = (Math.PI*2.0)/nodeCount; // угол между узлами
-			
-			var r0 = 50;  // 80
-			
-			var nodes = []; // массив координат узлов
-			var cBounds = [];
-			
-			for(var i=0; i<nodeCount; i++){
-				var podLength = r0*(Math.random() + 0.5); // длинна части скелета
-				
-				var nodePos = new $V().SetPolar(podLength, alphaRad*i, false);
-				
-				var x = nodePos.x+pos.x,
-					y = nodePos.y+pos.y;
-					
-				var bound = snap.line(pos.x, pos.y, x, y).attr({stroke:'#0000ff', 'stroke-width':3});
-				bound.data('length', podLength);
-				bound.data('angle', alphaRad*i);
-				var ndView = snap.circle(x, y, 8);
-				ndView.drag(dragmove, dragstart, dragend);
-				ndView.data('bound', bound);
-				ndView.data('velocity', 0);
-				
-				cBounds.push(bound);
-				nodes.push(ndView);
-			}
-			
-			var ndCenter = snap.circle(pos.x, pos.y, 8);
-			ndCenter.drag(dragmove, dragstart, dragend);
-			ndCenter.data('cBounds', cBounds);
-			ndCenter.data('velocity', 0);
-			
-			this.center = ndCenter;
-			this.nodes = nodes;
-			
-			
-			function dragstart(x, y, e) {
-				this.data("curPos", [
-					+this.attr("cx"), 
-					+this.attr("cy")
-				]);
-			}
-			function dragmove(dx, dy, x, y, e) {
-				var curP = this.data("curPos");
-				var posX = dx + curP[0],
-					posY = dy + curP[1];
-				
-				this.attr({cx:posX, cy:posY});
-				
-				var bound  = this.data('bound');
-				if(bound) bound.attr({x2:posX, y2:posY});
-				else{
-					var cBounds = this.data('cBounds');
-					for(var i=0; i<cBounds.length; i++){
-						cBounds[i].attr({x1:posX, y1:posY});
-					}
-				}
-			}
-			function dragend(e) {}
+			 Loculare.basicSpawn(snap, pos, this, skin);
 		},
 		animate: function(dT){
 		
@@ -139,6 +77,28 @@ var Skeleton = (function($, $H, $D, $V){
 				
 			}
 		}
+	});
+	
+	var skin;
+	
+	$(function(){
+		skin = {
+			node:{
+				color:Loculare.skin=='tron'?'#080'
+					:'#000'
+			},
+			center:{
+				color: Loculare.skin=='tron'?'#840'
+					:'#000',
+				fill: '#000'
+			},
+			line:{
+				color: Loculare.skin=='tron'?'#0000ff'
+					:'#0000ff',
+				width: Loculare.skin=='tron'? 1
+					:3
+			}
+		};
 	});
 	
 	return Skeleton;
